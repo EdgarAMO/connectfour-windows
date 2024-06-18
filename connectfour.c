@@ -27,6 +27,7 @@ void blue();
 void yellow();
 void reset();
 int search_four(char player, char bins[][COLS]);
+int check_for_draw(char bins[][COLS]);
 
 // main function or driver function:
 // - - - - - - - - - - - - - - - - -
@@ -34,6 +35,7 @@ int search_four(char player, char bins[][COLS]);
 int main()
 {
 	int gameover = 0;
+	int draw = 0;
 	int turn = 0;
 
 	char player;
@@ -59,15 +61,19 @@ int main()
 
 		// Check if a player has won
 		gameover = search_four(player, bins);
+
+		// Check if there is a draw
+		draw = check_for_draw(bins);
+
+		// Check termination conditions
 		if (gameover)
 			printf("\nCongratulations, player %c has won!\n", player);
+        else if (draw)
+        {
+            printf("\nDraw! Game over...\n");
+            gameover = 1;
+        }
 
-		// Test if the board is full, if so, call for a draw
-		if (turn == ROWS * COLS)
-		{
-			printf("\nDraw! Game over...\n");
-			gameover = 1;
-		}
 	}
 
 	return 0;
@@ -288,6 +294,7 @@ int search_four(char player, char bins[][COLS])
 		int c;
 		int moves;
 	};
+
 	struct point pairs[] =
 	{
 		{0, 0, 4},
@@ -297,6 +304,7 @@ int search_four(char player, char bins[][COLS])
 		{0, 0, 5},
 		{0, 0, 4}
 	};
+
 	int NOPAIRS = 6;
 	int p;
 	int n;
@@ -416,4 +424,24 @@ int search_four(char player, char bins[][COLS])
 	// default condition: four tokens not found
 	return 0;
 
+}
+
+int check_for_draw(char bins[][COLS])
+{
+    int counter = 0;
+
+    for (int i = 0; i < ROWS; ++i)
+    {
+        for (int j = 0; j < COLS; ++j)
+        {
+            if ((bins[i][j] == 'O') || (bins[i][j] == 'X'))
+                counter++;
+        }
+    }
+
+    // return true if the board is full, namely 42 tokens are found.
+    if (counter >= (ROWS * COLS))
+        return 1;
+    else
+        return 0;
 }
